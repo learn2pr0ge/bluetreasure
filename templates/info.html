@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bluetreasure HR system</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="../static/gazprom-neft-logo-eng.svg" alt="GazProm Neft Logo">
+    </div>
+    <div class="title">Bluetreasure HR system</div>
+</header>
+
+<main>
+    <div class="main_text_block">
+        <div class="main_text">
+            Ниже представлено описание лучших кандидатов для данной вакансии:
+        </div>
+    </div>
+
+    <div class="llm_response_card">
+        <div class="llm_response_header">
+            <span>Результат анализа</span>
+        </div>
+        <div class="llm_response_body">
+            {{ llm_response }}
+        </div>
+    </div>
+
+    <div class="back_btn_cont">
+        <a href="{{ url_for('webstart.start_page') }}" class="back_btn">Новый поиск</a>
+    </div>
+</main>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+@font-face {
+    font-family: 'FreeSet';
+    src: local('FreeSet Regular'), local('FreeSet-Regular'),
+        url('../fonts/FreeSetC.woff2') format('woff2'),
+        url('../fonts/FreeSetC.woff') format('woff'),
+        url('../fonts/FreeSetC.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'FreeSet', Arial;
+}
+
+main {
+    flex: 1;
+}
+
+header {
+    width: 98%;
+    height: 100px;
+    background-color: white;
+    color: #0066B3;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+    font-family: 'FreeSet', Arial;
+
+}
+
+.logo img {
+
+    margin-left: 20px;
+    width: 170px;
+    height: 90px;
+    }
+
+.title {
+    transform: translateX(-50%);
+    position: absolute;
+    left: 50%;
+    margin-top: 30px;
+    font-size: 40px;
+    text-align: center;
+}
+.main_text_block {
+    width: 98%;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+.main_text_block {
+    text-align: center;
+    padding: 40px 20px 10px;
+}
+
+.main_text {
+    color: #0066B3;
+    font-size: 20px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.forms_cont {
+    padding: 32px 40px;
+    box-sizing: border-box;
+    width: 98%;
+    font-family: 'FreeSet', Arial, sans-serif;
+}
+
+.forms_cont form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: stretch;
+}
+
+
+.form_card {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid #d0e4f5;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 102, 179, 0.08);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease;
+}
+
+.form_card:hover {
+    box-shadow: 0 8px 30px rgba(0, 102, 179, 0.15);
+}
+
+.form_title {
+    color: #0066B3;
+    font-size: 22px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e8f2fc;
+}
+
+.form_card label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.form_card textarea {
+    flex: 1;
+    min-height: 320px;
+    padding: 14px 16px;
+    border: 1.5px solid #c8dff2;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    color: #222;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    line-height: 1.6;
+}
+
+.form_card textarea:focus {
+    border-color: #0066B3;
+    box-shadow: 0 0 0 3px rgba(0, 102, 179, 0.12);
+}
+
+.form_card textarea::placeholder {
+    color: #aac4de;
+    font-size: 14px;
+}
+
+
+.submit_btn {
+    width: 100%;
+    padding: 16px;
+    background: #0066B3;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+
+}
+
+.submit_btn:hover {
+    background: #0055a0;
+
+}
+
+
+
+
+.main_text_block {
+    text-align: center;
+    padding: 40px 20px 10px;
+}
+
+.main_text {
+    color: #0066B3;
+    font-size: 20px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+
+.llm_response_card {
+    max-width: 900px;
+    margin: 32px auto;
+    background: #ffffff;
+    border: 1px solid #d0e4f5;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 102, 179, 0.08);
+    overflow: hidden;
+    font-family: 'FreeSet', Arial, sans-serif;
+}
+
+
+.llm_response_header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0066B3;
+    color: #ffffff;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.llm_icon {
+    font-size: 20px;
+}
+
+
+.llm_response_body {
+    padding: 28px 32px;
+    font-size: 15px;
+    color: #0066B3;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+
+.back_btn_cont {
+    text-align: center;
+    padding: 0 0 48px;
+}
+
+.back_btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #f0f6fd;
+    color: #0066B3;
+    border: 1.5px solid #c8dff2;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'FreeSet', Arial, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back_btn:hover {
+    background: #dceffe;
+    box-shadow: 0 4px 12px rgba(0, 102, 179, 0.12);
+}
+
+
+
+
