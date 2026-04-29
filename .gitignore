@@ -1,1 +1,7 @@
 bt_venv
+.env
+__pycache__
+tempinfo.txt
+tz_opensearch.txt
+.gitignore
+.dockerignore

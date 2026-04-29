@@ -1,0 +1,34 @@
+services:
+  uwsgi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - socket_volume:/tmp
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - socket_volume:/tmp
+    depends_on:
+      - uwsgi
+
+  opensearch:
+    build:
+      context: ./opensearch
+      dockerfile: Dockerfile
+    env_file:
+      - ./opensearch/.env
+    ports:
+      - 9200:9200
+      - 9600:9600
+    depends_on:
+      - uwsgi
+      - nginx
+
+volumes:
+  socket_volume:
