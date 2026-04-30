@@ -2,7 +2,7 @@ import requests
 
 url="http://92.39.53.155:8000/v1/chat/completions"
 
-def request_llm(vacancy, candidates):
+def request_llm_final(vacancy, candidates):
 
     system_prompt = (
         f"Ты профессиональный HR. Из предоставленных кандидатов выбери того, "

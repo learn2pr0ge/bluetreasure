@@ -1,6 +1,9 @@
 # Проект по ранжированию кандидатов для Газпром-Нефти
 
-## Инструкция по установке
+## Инструкция по ручной установке
+
+### ! Обязательно должен быть запущен docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=bestteam1984A. -e "discovery.type=single-node"  --name opensearch-node opensearchproject/opensearch:latest !
+
 
 ### Linux
 
@@ -68,3 +71,20 @@ python app.py
 > ```powershell
 > Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
+
+## Инструкция по установке через docker-compose
+
+### Обязательно поменять в файлах адрес доступа к Opensearch hosts=[{"host": "localhost", "port": 9200}], # для запуска через docker-compose поменять на 172.23.0.4
+
+#### Собрать
+
+```aiignore
+docker-compose build
+```
+
+#### Запустить
+
+```aiignore
+docker-compose up
+```
+

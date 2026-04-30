@@ -1,16 +1,24 @@
 import requests
+from opensearchpy import OpenSearch
+from opensearchpy.helpers import bulk
+import json
+from json_repair import repair_json
+
+# Проверка наличия индекса
+
 
 url="http://92.39.53.155:8000/v1/chat/completions"
+client = OpenSearch(
+        hosts=[{"host": "localhost", "port": 9200}], # для запуска через docker-compose поменять на 172.23.0.4
+        http_auth=("admin", "bestteam1984A."),
+        use_ssl=True,
+        verify_certs=False,
+        ssl_show_warn=False
+    )
+
 
 def request_llm(candidates):
 
-    # system_prompt = (
-    #     f"Мне нужно чтобы ты из текста множественных резюме выделил основные данные и выдал ответ в формате JSON без лишней информации"
-    #     f"Ответ должен содержать только JSON для вставки в Opensearch"
-    #     f'_id = 1'
-    #     f'Данные должны начинаться с {{"index": {{"_id": "{"_id"}"}}}}. После первого кандидата должно идти {{"index": {{"_id": "{"_id + 1"}"}}}} _id должен увеличиваться'
-    #     f'Не делай перенос строки между кандитатами. JSON должен подходить для вставки в Opensearch'
-    # )
 
     system_prompt = """
 Мне нужно чтобы ты из текста множественных резюме выделил основные данные и выдал ответ в формате JSON без лишней информации
@@ -47,10 +55,13 @@ def request_llm(candidates):
 - Группируй связанные поля во вложенные объекты: experience{}, skills{}, languages{}
 - Называй поля по смыслу на английском в snake_case
 
-Ответ должен содержать только JSON для вставки в Opensearch"
-_id = 1
-Данные должны начинаться с {"index": {"_id": "1"}} . После первого кандидата должно идти {"index": {"_id": +1}}  _id должен увеличиваться
-Не делай перенос строки между кандидатами
+Ответ должен содержать только JSON массив для вставки в Opensearch"
+Возвращай данные как JSON-массив объектов:
+[
+  {"name": "...", "age": ...},
+  {"name": "...", "age": ...}
+]
+НЕ используй формат {"index": ...} — только чистый массив.
 Если не хватает информации оставляй "null"
 В ключ resume_text добавь короткий текст о кандидате со всеми кейвордами
 === ПРИМЕР ВЫВОДА ===
@@ -70,78 +81,54 @@ _id = 1
     }
 
     response = requests.post(url, json=data)
-    return response.json()["choices"][0]["message"]["content"]
+    data_for_open = response.json()["choices"][0]["message"]["content"]
+    print(f'Данные ответа от модели Qwen: {data_for_open}')
+    # чиним json на всякий случай
+    data_for_open = repair_json(data_for_open)
 
-cand = """ 
-=== РЕЗЮМЕ 1 — Tabular / HR-формат ===
+    # Создание индекса Opensearch
+    # Если индекс есть до удаляем из него все данные (нужно для повторных пусков)
+    if client.indices.exists(index='candidates'):
+        # если индекс есть до удаляем все данные из него (нужно для повторных запусков)
+        client.indices.delete(index='candidates')
+        mapping = {
+            "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 1
+            },
 
-ФИО: Игорь Белов
-Дата рождения: 15.03.1990 (35 лет)
-Город: Санкт-Петербург | Готов к переезду: нет | Удалёнка: да
-Контакты: igor.belov@gmail.com | +7 921 456-78-90 | t.me/igorbelov
+        }
+        client.indices.create(index='candidates', body=mapping)
+        parsed = json.loads(data_for_open)
+        actions = [
+            {"_index": "candidates", "_id": str(i + 1), "_source": doc}
+            for i, doc in enumerate(parsed)
+        ]
+        success, failed = bulk(client, actions)
+        print("success: ", success)
+        print("failed: ", failed)
+        return success
 
-ОПЫТ РАБОТЫ:
-2021–н.в. │ Senior Data Scientist │ Сбер │ Москва
-          │ - Разработка моделей скоринга для малого бизнеса
-          │ - A/B тестирование, рост конверсии на 14%
-          │ - Стек: Python, LightGBM, Spark, Hive, Airflow
+    else:
+        mapping = {
+            "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 1
+            },
 
-2018–2021 │ Data Analyst │ ВТБ │ Санкт-Петербург
-          │ - Построение отчётности в Tableau
-          │ - SQL-оптимизация запросов, ускорение на 3x
+        }
+        client.indices.create(index='candidates', body=mapping)
 
-ОБРАЗОВАНИЕ: МГУ, Факультет ВМК, бакалавр, 2012
-ЯЗЫКИ: Русский (родной), Английский (B2), Немецкий (A2)
-ЗАРПЛАТА: от 420 000 руб/мес
-НАВЫКИ: Python, Spark, LightGBM, XGBoost, Airflow, PostgreSQL, Hive, Tableau, Docker
-KAGGLE: топ-5% в 2 соревнованиях по табличным данным
-
-
-=== РЕЗЮМЕ 2 — Свободный текст / "письмо о себе" ===
-
-Привет! Меня зовут Екатерина, мне 27. Я занимаюсь компьютерным зрением уже почти 3 года.
-Сейчас работаю в небольшой продуктовой компании Visionify (Москва) — делаем промышленный
-контроль качества на конвейерах с помощью CV. Моя основная задача — детекция дефектов
-на изображениях с производственных камер.
-
-Из стека: PyTorch само собой, OpenCV, YOLO (v5, v8), немного ONNX для экспорта моделей
-в прод. Умею в Docker, пишу на Python уровня middle. С SQL работаю редко, но PostgreSQL
-знаю достаточно. Английский свободный, читаю документацию и статьи без проблем — C1.
-
-Из достижений — наша команда снизила процент брака на производстве у одного из клиентов
-с 2.1% до 0.4%. Я отвечала за пайплайн обучения и деплой модели.
-
-Ищу компанию где есть интересные CV-задачи, желательно не в enterprise. Зарплатные
-ожидания — 300к+. Фамилия: Орлова. Почта: kate.orlova.cv@yandex.ru
+        parsed = json.loads(data_for_open)
+        actions = [
+            {"_index": "candidates", "_id": str(i + 1), "_source": doc}
+            for i, doc in enumerate(parsed)
+        ]
+        success, failed = bulk(client, actions)
+        print("success: ", success)
+        print("failed: ", failed)
+        return success
 
 
-=== РЕЗЮМЕ 3 — LinkedIn-стиль / английский язык ===
 
-Nikolay Tsvetkov
-Age: 33 | Moscow, Russia | Remote only
-📧 n.tsvetkov@proton.me | 🔗 linkedin.com/in/ntsvetkov | 💻 github.com/ntsvetkov
 
-SUMMARY
-NLP Engineer with 5+ years of experience building production-grade text processing
-systems. Specialized in search relevance, information extraction, and LLM fine-tuning.
-
-EXPERIENCE
-NLP Engineer — Ozon (2022 – present)
-• Built a product search ranking model; improved nDCG@10 by 0.08
-• Fine-tuned ruBERT for category classification (94% accuracy, 15M SKUs)
-• Deployed models via FastAPI + Docker + K8s; p99 latency < 80ms
-
-NLP Researcher — ABBYY (2019 – 2022)
-• Named entity recognition for legal documents
-• Published 1 paper at EMNLP workshop 2021
-
-SKILLS
-Languages: Python, SQL (ClickHouse, PostgreSQL)
-Frameworks: PyTorch, HuggingFace Transformers, spaCy, FastAPI
-Infra: Docker, Kubernetes, Kafka, Airflow
-
-EDUCATION: MIPT — M.Sc. Applied Mathematics & Physics, 2015
-LANGUAGES: Russian (native), English (C1)
-SALARY: 500 000 RUB / negotiable
-"""
-print(request_llm(cand))

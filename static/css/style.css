@@ -249,6 +249,180 @@ header {
     box-shadow: 0 4px 12px rgba(0, 102, 179, 0.12);
 }
 
+/* ── Источник данных ── */
+    .db_badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #e8f2fc;
+      border: 1px solid #c8dff2;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 13px;
+      color: #0066B3;
+      font-weight: 600;
+      max-width: 900px;
+      margin: 24px auto 0;
+    }
+
+    .db_dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    /* ── Блок вакансии ── */
+    .llm_response_card {
+      max-width: 900px;
+      margin: 24px auto;
+      background: #ffffff;
+      border: 1px solid #d0e4f5;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 102, 179, 0.08);
+      overflow: hidden;
+      font-family: 'FreeSet', Arial, sans-serif;
+    }
+
+    .llm_response_header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0066B3;
+      color: #ffffff;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .llm_icon { font-size: 20px; }
+
+    .llm_response_body {
+      padding: 28px 32px;
+      font-size: 15px;
+      color: #1a3a5c;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    /* ── Кандидаты ── */
+    .candidates_header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0066B3;
+      color: #ffffff;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .candidates_list {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 15px;
+      color: #1a3a5c;
+      font-family: 'FreeSet', Arial, sans-serif;
+    }
+
+    .candidate_row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      align-items: start;
+      gap: 14px;
+      padding: 16px 20px;
+      border: 1px solid #d0e4f5;
+      border-radius: 12px;
+      background: #f7fbff;
+      transition: box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .candidate_row:hover {
+      background: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 102, 179, 0.1);
+    }
+
+    .cand_index {
+      width: 40px; height: 40px;
+      background: #0066B3;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .cand_name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0066B3;
+      margin-bottom: 4px;
+    }
+
+    .cand_meta {
+      font-size: 13px;
+      color: #6a8aaa;
+      margin-bottom: 8px;
+    }
+
+    .cand_resume {
+      font-size: 13px;
+      color: #3a5a78;
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .badge_active {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: #d4f0d4;
+      color: #1a6b1a;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Кнопка назад ── */
+    .back_btn_cont {
+      text-align: center;
+      padding: 24px 0 48px;
+    }
+
+    .back_btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #f0f6fd;
+      color: #0066B3;
+      border: 1.5px solid #c8dff2;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'FreeSet', Arial, sans-serif;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .back_btn:hover {
+      background: #dceffe;
+      box-shadow: 0 4px 12px rgba(0, 102, 179, 0.12);
+    }
 
 
 
