@@ -2,7 +2,7 @@ from opensearchpy import OpenSearch
 
 # Вывести список всех кандидатов из Opensearch
 client = OpenSearch(
-        hosts=[{"host": "localhost", "port": 9200}], # для запуска через docker-compose поменять на 172.23.0.4
+        hosts=[{"host": "opensearch", "port": 9200}], # для запуска через docker-compose поменять на 172.23.0.4
         http_auth=("admin", "bestteam1984A."),
         use_ssl=True,
         verify_certs=False,

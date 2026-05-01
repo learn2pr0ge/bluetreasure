@@ -4,7 +4,7 @@
 
 ### ! Обязательно должен быть запущен docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=bestteam1984A. -e "discovery.type=single-node"  --name opensearch-node opensearchproject/opensearch:latest !
 
-
+### Обязательно поменять в файлах list_objects.py save_vacancy.py и llm_request_for_opensearch на адрес доступа к Opensearch hosts=[{"host": "localhost", "port": 9200}]
 ### Linux
 
 ```aiignore
@@ -74,7 +74,7 @@ python app.py
 
 ## Инструкция по установке через docker-compose
 
-### Обязательно поменять в файлах адрес доступа к Opensearch hosts=[{"host": "localhost", "port": 9200}], # для запуска через docker-compose поменять на 172.23.0.4
+### Обязательно поменять в файлах адрес доступа к Opensearch hosts=[{"host": "localhost", "port": 9200}], для запуска через docker-compose поменять на opensearch
 
 #### Собрать
 
