@@ -3,7 +3,7 @@ import uuid
 from .llm_request import request_llm_final
 from .save_vacanсy import create_index
 from .llm_request_for_opensearch import request_llm, split_vacancies, check_opensearch_index
-from .list_objects import show_objects
+from .list_objects import show_objects, add_cosinus
 import time
 import redis
 import json
@@ -59,6 +59,8 @@ def request_info():
         if result == 0:
             flash('Ошибка подключения к серверу', 'error')
             return redirect(url_for('webstart.start_page'))
+        add_cosinus()
+        time.sleep(2)
         vac_text, cand_text = show_objects()
         return render_template('object_list.html', vac_text=vac_text, cand_text=cand_text)
     return redirect(url_for('webstart.start_page'))

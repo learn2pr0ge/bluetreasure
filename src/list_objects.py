@@ -1,4 +1,5 @@
 from opensearchpy import OpenSearch
+from .make_embed import similar
 
 # Вывести список всех кандидатов из Opensearch
 client = OpenSearch(
@@ -8,6 +9,32 @@ client = OpenSearch(
         verify_certs=False,
         ssl_show_warn=False
     )
+# Добавляем к каждому кандидату косинусное растояние ембедингов с вакансией
+def add_cosinus():
+    response = client.search(
+        index="vacancy",
+        body={"query": {"match_all": {}}, "size": 100}
+    )
+    vacancy_text = response['hits']['hits'][0]['_source']['vacancy_text']
+
+    response_candidates = client.search(
+        index="candidates",
+        body={"query": {"match_all": {}}, "size": 100}
+    )
+    for candidate in response_candidates['hits']['hits']:
+        doc_id = candidate['_id']
+        resume_text = candidate['_source']['resume_text']
+        cos_score = similar(vacancy_text, resume_text)
+        client.update(
+            index="candidates",
+            id=doc_id,
+            body={
+                "doc": {
+                    "cosinus_score": cos_score
+                }
+            }
+        )
+    return 1
 
 
 def show_objects():
@@ -29,7 +56,8 @@ def show_objects():
     for candidate in response_candidates['hits']['hits']:
         doc_id = candidate['_id']
         resume_text = candidate['_source']['resume_text']
-        result_candidates[doc_id] = resume_text
+        cos_info = candidate['_source']['cosinus_score']
+        result_candidates[doc_id] = resume_text + '\n\n' + 'Косинусное растояние с вакансией по эмбедингам модели(intfloat/multilingual-e5-base):' + str(cos_info)
     # переводим словарь в текст для отображения
     candidate_text = ''
     for id, resume in result_candidates.items():
