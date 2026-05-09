@@ -1,9 +1,6 @@
 import fitz
 import re
 
-import candidate_common
-
-
 def normalize_text(text: str) -> str:
     return " ".join(
         text.replace("\xa0", " ")
@@ -63,11 +60,18 @@ def extract_section_texts(
 # EXTRACTION
 # =========================
 
-def read_resume_pdf_raw(pdf_path: str) -> dict:
+def read_resume_pdf_raw(pdf_source) -> dict:
     pages_text = []
     blocks_all = []
 
-    with fitz.open(pdf_path) as doc:
+    if hasattr(pdf_source, "stream"):
+        pdf_source.stream.seek(0)
+        pdf_bytes = pdf_source.stream.read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    else:
+        doc = fitz.open(pdf_source)
+
+    with doc:
         for page_num, page in enumerate(doc, start=1):
             page_text = normalize_text(page.get_text())
             if page_text:

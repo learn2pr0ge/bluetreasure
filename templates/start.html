@@ -1,55 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Bluetreasure HR system</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Bluetreasure</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.4; }
+        h1 { margin-bottom: 24px; }
+        .menu { display: grid; gap: 12px; }
+        .card {
+            display: block;
+            padding: 16px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #111;
+            background: #fafafa;
+        }
+        .card:hover { background: #f0f0f0; }
+        .card-title { font-weight: bold; margin-bottom: 6px; }
+    </style>
 </head>
 <body>
-<header>
-    <div class="logo">
-        <img src="../static/gazprom-neft-logo-eng.svg" alt="GazProm Neft Logo">
+    <h1>Bluetreasure</h1>
+
+    <div class="menu">
+        <a class="card" href="{{ url_for('webstart.vacancies_page') }}">
+            <div class="card-title">База вакансий</div>
+            <div>Добавление вакансий из текста или PDF и просмотр уже загруженных.</div>
+        </a>
+
+        <a class="card" href="{{ url_for('webstart.candidates_upload_page') }}">
+            <div class="card-title">Загрузка резюме</div>
+            <div>Пачечная загрузка HH PDF резюме в индекс candidates.</div>
+        </a>
+
+        <a class="card" href="{{ url_for('webstart.search_page') }}">
+            <div class="card-title">Поиск кандидатов</div>
+            <div>Выбор вакансии из базы и поиск top-N кандидатов.</div>
+        </a>
     </div>
-    <div class="title">Bluetreasure HR system</div>
-</header>
-<main>
-    <div class="main_text_block">
-        <div class="main_text">
-            Введите данные вакансии в левую форму. Введите данные кандидатов в правую форму.
-        </div>
-    </div>
-
-    <div class="forms_cont">
-        <form action="/" method="POST">
-            <div class="form_card">
-                <h2 class="form_title">Вакансия</h2>
-                <label for="vacancy_info">Описание вакансии</label>
-                <textarea id="vacancy_info" name="vacancy_info"
-                    placeholder="Введите требования, обязанности, стек технологий..."></textarea>
-            </div>
-
-            <div class="form_card">
-                <h2 class="form_title">Кандидаты</h2>
-                <label for="cand_info">Данные кандидатов</label>
-                <textarea id="cand_info" name="cand_info"
-                    placeholder="Введите резюме кандидатов..."></textarea>
-            </div>
-
-            <button type="submit" class="submit_btn">Ранжировать</button>
-        </form>
-    </div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <ul class="flashes">
-                                                    {% for category, message in messages %}
-                                                        <li class="{{ category }}"><pre><font color="red" style="font-size: 1.3em;">{{ message }}</font></pre></li>
-                                                    {% endfor %}
-
-                        </ul>
-     {% endif %}
-    {% endwith %}
-</main>
 </body>
 </html>
-
-

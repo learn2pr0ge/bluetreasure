@@ -1,6 +1,6 @@
 import re
-from candidate_common import *
-from candidate_constants import *
+from .candidate_common import *
+from .candidate_constants import *
 
 
 

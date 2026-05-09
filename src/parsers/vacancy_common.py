@@ -3,10 +3,18 @@ import re
 from .vacancy_constants import *
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
-    doc = fitz.open(pdf_path)
-    text = "\n".join(page.get_text("text") for page in doc)
-    doc.close()
+
+def extract_text_from_pdf(pdf_source) -> str:
+    if hasattr(pdf_source, "stream"):
+        pdf_source.stream.seek(0)
+        pdf_bytes = pdf_source.stream.read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    else:
+        doc = fitz.open(pdf_source)
+
+    with doc:
+        text = "\n".join(page.get_text("text") for page in doc)
+
     return text
 
 

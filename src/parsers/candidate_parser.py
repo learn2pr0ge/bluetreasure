@@ -1,6 +1,6 @@
-from candidate_top import *
-from candidate_experience import *
-from candidate_tail import *
+from .candidate_top import *
+from .candidate_experience import *
+from .candidate_tail import *
 
 
 def parse_resume(data: dict) -> dict:

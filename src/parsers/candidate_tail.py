@@ -1,6 +1,6 @@
 import re
-from candidate_constants import *
-from candidate_common import *
+from .candidate_constants import *
+from .candidate_common import *
 
 
 def parse_languages_from_text(text: str) -> list[tuple[str, str]]:

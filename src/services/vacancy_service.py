@@ -104,6 +104,7 @@ def save_vacancy_from_pdf(file) -> dict:
 
 def list_vacancies() -> list[dict]:
     client = get_opensearch_client()
+    create_vacancy_index_if_not_exists(client)
     return storage_list_vacancies(client, size=100)
 
 

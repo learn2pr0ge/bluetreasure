@@ -1,6 +1,6 @@
 from ..parsers.candidate_common import read_resume_pdf_raw
 from ..parsers.candidate_parser import parse_resume
-from ..parsers.candidate_tail import build_resume_text
+from ..embeddings.make_embed import build_resume_text
 from ..embeddings.make_embed import embed_resume
 from ..storage.opensearch_client import get_opensearch_client
 from ..storage.opensearch_candidates import (
@@ -34,6 +34,7 @@ def ingest_candidate_pdfs(files) -> dict:
     loaded = 0
     errors = 0
     duplicates = 0
+    error_details = []
 
     client = get_opensearch_client()
     create_candidates_index_if_not_exists(client)
@@ -51,8 +52,12 @@ def ingest_candidate_pdfs(files) -> dict:
             docs[file.filename] = doc
             loaded += 1
 
-        except Exception:
+        except Exception as e:
             errors += 1
+            error_details.append({
+                "file": file.filename,
+                "error": str(e),
+            })
 
     if docs:
         bulk_index_candidates(client, docs)
@@ -61,4 +66,5 @@ def ingest_candidate_pdfs(files) -> dict:
         "loaded": loaded,
         "errors": errors,
         "duplicates": duplicates,
+        "error_details": error_details,
     }

@@ -1,5 +1,7 @@
 from sentence_transformers import SentenceTransformer
+
 model = SentenceTransformer("intfloat/multilingual-e5-base", device="cpu")
+
 
 def build_resume_text(doc: dict) -> str:
     parts = []
@@ -49,3 +51,7 @@ def build_resume_text(doc: dict) -> str:
 
 def embed_resume(text: str) -> list[float]:
     return model.encode(f"passage:{text}", normalize_embeddings=True).tolist()
+
+
+def embed_vacancy(text: str) -> list[float]:
+    return model.encode(f"query:{text}", normalize_embeddings=True).tolist()

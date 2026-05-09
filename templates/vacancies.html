@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вакансии</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1100px; margin: 30px auto; line-height: 1.4; }
+        .topbar { margin-bottom: 20px; }
+        .layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+        .box { border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: #fafafa; }
+        textarea { width: 100%; min-height: 260px; box-sizing: border-box; }
+        input[type="file"] { margin-top: 8px; }
+        button { margin-top: 12px; padding: 10px 16px; cursor: pointer; }
+        .flash { padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; }
+        .flash.success { background: #eaf7ea; border: 1px solid #b9dfb9; }
+        .flash.error { background: #fdecec; border: 1px solid #efb3b3; }
+        .vacancy-item { padding: 12px 0; border-bottom: 1px solid #e5e5e5; }
+        .muted { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="{{ url_for('webstart.start_page') }}">← На главную</a>
+    </div>
+
+    <h1>База вакансий</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="layout">
+        <div class="box">
+            <h2>Добавить новую вакансию</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div>
+                    <label for="vacancy_text"><strong>Текст вакансии</strong></label>
+                    <textarea id="vacancy_text" name="vacancy_text" placeholder="Вставь сюда текст вакансии"></textarea>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label for="vacancy_pdf"><strong>Или PDF вакансии</strong></label><br>
+                    <input id="vacancy_pdf" type="file" name="vacancy_pdf" accept=".pdf">
+                </div>
+
+                <button type="submit">Сохранить вакансию</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <h2>Уже загруженные вакансии</h2>
+
+            {% if vacancies %}
+                {% for vacancy in vacancies %}
+                    <div class="vacancy-item">
+                        <div><strong>{{ vacancy.title or "Без названия" }}</strong></div>
+                        <div class="muted">
+                            {% if vacancy.company %}{{ vacancy.company }}{% endif %}
+                            {% if vacancy.experience_level %} • {{ vacancy.experience_level }}{% endif %}
+                            {% if vacancy.format %} • {{ vacancy.format }}{% endif %}
+                        </div>
+                        <div class="muted">id: {{ vacancy._id }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="muted">В индексе vacancy пока нет документов.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

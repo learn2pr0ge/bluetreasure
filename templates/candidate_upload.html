@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Загрузка резюме</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; line-height: 1.4; }
+        .topbar { margin-bottom: 20px; }
+        .box { border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: #fafafa; }
+        button { margin-top: 12px; padding: 10px 16px; cursor: pointer; }
+        .flash { padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; }
+        .flash.success { background: #eaf7ea; border: 1px solid #b9dfb9; }
+        .flash.error { background: #fdecec; border: 1px solid #efb3b3; }
+        .report { margin-top: 20px; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="{{ url_for('webstart.start_page') }}">← На главную</a>
+    </div>
+
+    <h1>Загрузка резюме</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="box">
+        <form method="POST" enctype="multipart/form-data">
+            <label for="candidate_pdfs"><strong>Выбери PDF резюме</strong></label><br><br>
+            <input id="candidate_pdfs" type="file" name="candidate_pdfs" accept=".pdf" multiple>
+            <br>
+            <button type="submit">Загрузить резюме</button>
+        </form>
+    </div>
+
+    {% if report %}
+        <div class="report">
+            <h3>Последний отчет</h3>
+            <div>Загружено: <strong>{{ report.loaded }}</strong></div>
+            <div>Дублей: <strong>{{ report.duplicates }}</strong></div>
+            <div>Ошибок: <strong>{{ report.errors }}</strong></div>
+        </div>
+    {% endif %}
+
+
+    {% if report and report.error_details %}
+    <div class="report">
+        <h3>Ошибки</h3>
+        <ul>
+            {% for item in report.error_details %}
+                <li>
+                    <strong>{{ item.file }}</strong>: {{ item.error }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+
+</body>
+</html>
