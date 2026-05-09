@@ -35,6 +35,7 @@ def prepare_vacancy_doc(
         "company": parsed.get("company"),
         "format": parsed.get("format"),
         "experience_level": parsed.get("experience_level"),
+        "required_years": parsed.get("required_years"),
         "salary_hint": parsed.get("salary_hint"),
         "must_have": parsed.get("must_have", []),
         "requirements": parsed.get("requirements", []),

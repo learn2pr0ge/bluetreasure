@@ -41,6 +41,28 @@ def extract_sections(text: str) -> dict:
     return sections
 
 
+import re
+from .vacancy_constants import FALLBACK_TECH_TAGS, TERM_MAP
+
+
+def extract_fallback_tags(text: str) -> list[str]:
+    if not text:
+        return []
+
+    low = text.lower()
+    found = []
+
+    for tag in FALLBACK_TECH_TAGS:
+        pattern = rf"(?<!\w){re.escape(tag.lower())}(?!\w)"
+        if re.search(pattern, low, flags=re.IGNORECASE):
+            normalized = TERM_MAP.get(tag.lower(), tag.lower())
+            if normalized not in found:
+                found.append(normalized)
+
+    return found
+
+
+
 def build_vacancy_text(parsed: dict, raw_text: str) -> str:
     parts = []
 
@@ -55,6 +77,9 @@ def build_vacancy_text(parsed: dict, raw_text: str) -> str:
 
     if parsed.get("experience_level"):
         parts.append(f"Уровень/опыт: {parsed['experience_level']}")
+
+    if parsed.get("required_years") is not None:
+        parts.append(f"Требуемый опыт: {parsed['required_years']} лет")
 
     if parsed.get("salary_hint"):
         parts.append(f"Зарплата: {parsed['salary_hint']}")
@@ -76,11 +101,17 @@ def build_vacancy_text(parsed: dict, raw_text: str) -> str:
 
     vacancy_text = "\n".join(parts).strip()
 
-    # fallback: если полезной структуры мало, используем весь очищенный текст
-    filled_fields = sum(
-        bool(parsed.get(field))
-        for field in ["title", "company", "format", "experience_level", "must_have", "requirements", "responsibilities", "tags"]
-    )
+    filled_fields = sum([
+        bool(parsed.get("title")),
+        bool(parsed.get("company")),
+        bool(parsed.get("format")),
+        bool(parsed.get("experience_level")),
+        parsed.get("required_years") is not None,
+        bool(parsed.get("must_have")),
+        bool(parsed.get("requirements")),
+        bool(parsed.get("responsibilities")),
+        bool(parsed.get("tags")),
+    ])
 
     if len(vacancy_text) < 100 or filled_fields < 3:
         return raw_text

@@ -17,6 +17,9 @@ def build_knn_query(vacancy_vector: list[float], top_k: int = 20) -> dict:
     }
 
 
+from .ranking_service import rerank_candidates_rule_based
+
+
 def search_candidates_by_vacancy(vacancy_id: str, top_k: int = 20) -> list[dict]:
     client = get_opensearch_client()
 
@@ -42,6 +45,9 @@ def search_candidates_by_vacancy(vacancy_id: str, top_k: int = 20) -> list[dict]
             "experience": item.get("experience"),
             "skills": item.get("skills"),
             "source_file": item.get("source_file"),
+            "resume_vector": item.get("resume_vector"),
         })
 
-    return normalized
+    ranked = rerank_candidates_rule_based(vacancy, normalized)
+
+    return ranked

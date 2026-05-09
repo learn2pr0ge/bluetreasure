@@ -34,7 +34,6 @@ def ingest_candidate_pdfs(files) -> dict:
     loaded = 0
     errors = 0
     duplicates = 0
-    error_details = []
 
     client = get_opensearch_client()
     create_candidates_index_if_not_exists(client)
@@ -52,12 +51,8 @@ def ingest_candidate_pdfs(files) -> dict:
             docs[file.filename] = doc
             loaded += 1
 
-        except Exception as e:
+        except Exception:
             errors += 1
-            error_details.append({
-                "file": file.filename,
-                "error": str(e),
-            })
 
     if docs:
         bulk_index_candidates(client, docs)
@@ -66,5 +61,4 @@ def ingest_candidate_pdfs(files) -> dict:
         "loaded": loaded,
         "errors": errors,
         "duplicates": duplicates,
-        "error_details": error_details,
     }

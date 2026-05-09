@@ -29,6 +29,9 @@ VACANCY_MAPPING = {
             "experience_level": {
                 "type": "keyword"
             },
+            "required_years": {
+                "type": "float"
+            },
             "salary_hint": {
                 "type": "text"
             },

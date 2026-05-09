@@ -15,10 +15,16 @@ def parse_vacancy_text(raw_text: str) -> dict:
         "raw_text": raw_text,
     }
 
+    if not parsed.get("tags"):
+        fallback_source = " ".join(
+            x for x in [parsed.get("title"), raw_text] if x
+        )
+        parsed["tags"] = extract_fallback_tags(fallback_source)
+
     parsed["vacancy_text"] = build_vacancy_text(parsed, raw_text)
     return parsed
 
 
-def parse_vacancy_pdf(pdf_path: str) -> dict:
-    raw_text = extract_text_from_pdf(pdf_path)
+def parse_vacancy_pdf(pdf_source) -> dict:
+    raw_text = extract_text_from_pdf(pdf_source)
     return parse_vacancy_text(raw_text)
