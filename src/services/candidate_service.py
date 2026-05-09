@@ -1,8 +1,13 @@
-from ..parsers.candidate_parser import *
-from ..embeddings.make_embed import * 
-from ..storage.opensearch_candidates import *
-from ..storage.opensearch_client import *
-
+from ..parsers.candidate_common import read_resume_pdf_raw
+from ..parsers.candidate_parser import parse_resume
+from ..parsers.candidate_tail import build_resume_text
+from ..embeddings.make_embed import embed_resume
+from ..storage.opensearch_client import get_opensearch_client
+from ..storage.opensearch_candidates import (
+    candidate_exists,
+    bulk_index_candidates,
+    create_candidates_index_if_not_exists,
+)
 
 
 def prepare_candidate_doc(parsed: dict, source_file: str) -> dict:
@@ -14,15 +19,14 @@ def prepare_candidate_doc(parsed: dict, source_file: str) -> dict:
 
 
 def parse_data_full(data_full: dict) -> dict:
-    parsed = {}
+    parsed_docs = {}
 
     for filename, data in data_full.items():
-        candidate = parse_resume(data)
-        candidate = prepare_candidate_doc(candidate, filename)
-        parsed[filename] = candidate
+        parsed = parse_resume(data)
+        doc = prepare_candidate_doc(parsed, filename)
+        parsed_docs[filename] = doc
 
-    return parsed
-
+    return parsed_docs
 
 
 def ingest_candidate_pdfs(files) -> dict:
@@ -32,6 +36,7 @@ def ingest_candidate_pdfs(files) -> dict:
     duplicates = 0
 
     client = get_opensearch_client()
+    create_candidates_index_if_not_exists(client)
 
     for file in files:
         try:
@@ -39,7 +44,7 @@ def ingest_candidate_pdfs(files) -> dict:
             parsed = parse_resume(data)
             doc = prepare_candidate_doc(parsed, file.filename)
 
-            if client.exists(index="candidates", id=file.filename):
+            if candidate_exists(client, file.filename):
                 duplicates += 1
                 continue
 
@@ -50,7 +55,7 @@ def ingest_candidate_pdfs(files) -> dict:
             errors += 1
 
     if docs:
-        bulk_index_candidates(client, docs, index_name="candidates")
+        bulk_index_candidates(client, docs)
 
     return {
         "loaded": loaded,
