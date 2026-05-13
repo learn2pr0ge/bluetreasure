@@ -15,7 +15,16 @@ def parse_vacancy_text(raw_text: str) -> dict:
         "raw_text": raw_text,
     }
 
-    if not parsed.get("tags"):
+    raw_tags = parsed.get("tags") or []
+
+    if isinstance(raw_tags, str):
+        raw_tags = [raw_tags]
+
+    tag_source = " ".join(x for x in raw_tags if isinstance(x, str) and x.strip())
+
+    if tag_source:
+        parsed["tags"] = extract_fallback_tags(tag_source)
+    else:
         fallback_source = " ".join(
             x for x in [parsed.get("title"), raw_text] if x
         )

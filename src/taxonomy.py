@@ -78,6 +78,11 @@ TERM_MAP = {
     "а/в-тестирование":'a/b testing',
     "a/в-тестирование":'a/b testing',
     
+    "ab testing": "a/b testing",
+    "аб тестирование": "a/b testing",
+    "машинное обучение": "machine learning",
+    "машинного обучения": "machine learning",
+    "natural language processing": "nlp",
 
     "llm":'llm'
 }
@@ -140,22 +145,32 @@ CANONICAL_TECH_TAGS = [
     "spacy",
     "fastapi",
     "flask",
-    "llm"
+    "llm",
+    "a/b testing",
+    "machine learning",
+    "nlp",
+    "mlops",
 ]
 
 FALLBACK_TECH_TAGS = sorted(
-    set(TERM_MAP.values()) | set(CANONICAL_TECH_TAGS),
+    set(TERM_MAP.keys()) | set(TERM_MAP.values()) | set(CANONICAL_TECH_TAGS),
     key=len,
     reverse=True,
 )
 
-_SPLIT_RE = re.compile(r"[,;/|]+")
+_SPLIT_RE = re.compile(r"[,;|]+")
 _WORD_RE = re.compile(r"[a-zа-я0-9\.\+#\-]+", flags=re.IGNORECASE)
 
 
 def normalize_term(value: str) -> str:
     value = value.lower().strip()
     return TERM_MAP.get(value, value)
+
+SEARCH_TERMS = sorted(
+    set(TERM_MAP.keys()) | set(TERM_MAP.values()) | set(CANONICAL_TECH_TAGS),
+    key=len,
+    reverse=True,
+)
 
 
 def extract_tags_from_text(text: str) -> list[str]:
@@ -165,15 +180,11 @@ def extract_tags_from_text(text: str) -> list[str]:
     low = text.lower()
     found = []
 
-    for tag in FALLBACK_TECH_TAGS:
-        pattern = rf"(?<!\w){re.escape(tag.lower())}(?!\w)"
-        if re.search(pattern, low, flags=re.IGNORECASE):
-            normalized = TERM_MAP.get(tag.lower(), tag.lower())
-            if normalized not in found:
-                found.append(normalized)
+    for term in SEARCH_TERMS:
+        if term in low:
+            found.append(TERM_MAP.get(term, term))
 
-    return found
-
+    return sorted(set(found))
 
 def normalize_tags(tags: list[str]) -> set[str]:
     result = set()
@@ -186,21 +197,15 @@ def normalize_tags(tags: list[str]) -> set[str]:
         if not tag:
             continue
 
-        parts = re.split(r"[,;/|]+", tag)
+        parts = re.split(r"[,;|]+", tag)
 
         for part in parts:
             part = part.strip()
             if not part:
                 continue
 
-            if " " not in part:
-                token = TERM_MAP.get(part, part)
-                if len(token) > 1:
-                    result.add(token)
-                continue
-
-            for token in extract_tags_from_text(part):
-                if len(token) > 1:
-                    result.add(token)
+            token = TERM_MAP.get(part, part)
+            if len(token) > 1:
+                result.add(token)
 
     return result
