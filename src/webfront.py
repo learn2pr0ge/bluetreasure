@@ -261,6 +261,7 @@ def best_candidates():
     return render_template(
         "search_llm.html",
         vacancies=vacancies,
+        llm_response=search_results,
         selected_vacancy_id=selected_vacancy_id,
         selected_vacancy=selected_vacancy,
     )
